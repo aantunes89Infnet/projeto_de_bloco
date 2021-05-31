@@ -1,0 +1,20 @@
+* {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 200;
+}
+
+.status-bar__wrapper {
+    width: 500px;
+    box-shadow: 3px 3px 2px #d2d2d2
+}
+
+.status-bar__wrapper, .status-bar__loaded {
+    height: 30px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+.status-bar__loaded {
+    height: 99%;
+    background-color: #4C5270;
+}
+
