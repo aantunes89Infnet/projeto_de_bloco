@@ -16,7 +16,7 @@ def index(request):
     cpu = round(psutil.cpu_percent(), 2)
 
     dic_interfaces = psutil.net_if_addrs()
-    ip_address = dic_interfaces['en0'][0].address
+    ip_address = get_ip(dic_interfaces)
 
     template = loader.get_template('index.html')
 
@@ -27,3 +27,10 @@ def index(request):
         'ip': ip_address,
     }
     return HttpResponse(template.render(context, request))
+
+
+def get_ip(dic_interfaces):
+    try:
+        return dic_interfaces['en0'][0].address
+    except:
+        return dic_interfaces['Conexão Local* 1'][1].address
