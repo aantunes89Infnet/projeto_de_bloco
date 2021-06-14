@@ -2,6 +2,8 @@ from django.http import HttpResponse
 from django.template import loader
 import psutil
 
+from .services.cpu import CpuService
+
 
 def memory_percentage(memory):
     in_use_percent = (memory.used / memory.total) * 100
@@ -34,3 +36,15 @@ def get_ip(dic_interfaces):
         return dic_interfaces['en0'][0].address
     except:
         return dic_interfaces['Conexão Local* 1'][1].address
+
+
+def process(request):
+    cpu_list = psutil.cpu_percent(interval=1, percpu=True)
+
+    print(CpuService.exemplo_thais())
+
+    context = {
+        'cpu_list': cpu_list
+    }
+    template = loader.get_template('process.html')
+    return HttpResponse(template.render(context, request))
