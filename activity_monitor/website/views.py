@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.template import loader
-import psutil
-
 from .services.cpu import CpuService
+
+import psutil
 
 
 def memory_percentage(memory):
@@ -39,12 +39,8 @@ def get_ip(dic_interfaces):
 
 
 def process(request):
-    cpu_list = psutil.cpu_percent(interval=1, percpu=True)
+    cpu_list = CpuService.getPercent()
 
-    print(CpuService.exemplo_thais())
-
-    context = {
-        'cpu_list': cpu_list
-    }
+    context = {'cpu_list': cpu_list}
     template = loader.get_template('process.html')
     return HttpResponse(template.render(context, request))
