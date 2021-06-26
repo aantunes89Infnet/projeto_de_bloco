@@ -4,5 +4,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('process', views.process, name='process'),
+    path('cpu_info', views.cpu_info, name='cpu_info'),
+    path('memory_info', views.memory_info, name='memory_info'),
+    path('disc_info', views.disc_info, name='disc_info'),
+    path('ip_info', views.ip_info, name='ip_info'),
 ]

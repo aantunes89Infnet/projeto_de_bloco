@@ -1,46 +1,67 @@
 from django.http import HttpResponse
 from django.template import loader
 from .services.cpu import CpuService
+from .services.memory import MemoryService
+from .services.disc import DiscService
+from .services.ip import IpService
 
 import psutil
 
-
-def memory_percentage(memory):
-    in_use_percent = (memory.used / memory.total) * 100
-    print(in_use_percent)
-    return round(in_use_percent, 2)
+cpu_service = CpuService(psutil)
+memory_service = MemoryService()
+disc_service = DiscService(psutil)
+ip_service = IpService(psutil)
 
 
 def index(request):
-    disk = psutil.disk_usage('.')
-    disk_percent = round(disk.percent, 2)
-    memory = psutil.virtual_memory()
     cpu = round(psutil.cpu_percent(), 2)
-
-    dic_interfaces = psutil.net_if_addrs()
-    ip_address = get_ip(dic_interfaces)
 
     template = loader.get_template('index.html')
 
     context = {
-        'memory': memory_percentage(memory),
-        'cpu': cpu,
-        'disk': disk_percent,
-        'ip': ip_address,
+        'memory': memory_service.getMemoryInfo(),
+        'cpu': cpu_service.getPercent(),
+        'disc': disc_service.getDiscPercentage(),
+        'ip': ip_service.getIpInfo(),
     }
     return HttpResponse(template.render(context, request))
 
 
-def get_ip(dic_interfaces):
-    try:
-        return dic_interfaces['en0'][0].address
-    except:
-        return dic_interfaces['Conexão Local* 1'][1].address
-
-
-def process(request):
-    cpu_list = CpuService.getPercent()
-
-    context = {'cpu_list': cpu_list}
-    template = loader.get_template('process.html')
+def cpu_info(request):
+    context = {
+        'cpu_list': cpu_service.getPercent(),
+        'cpu_brand': cpu_service.getBrand(),
+        'cpu_arch': cpu_service.getArch()
+    }
+    template = loader.get_template('cpu-info.html')
     return HttpResponse(template.render(context, request))
+
+
+def memory_info(request):
+    context = {
+        'memory_info': memory_service.getMemoryInfo()
+    }
+    template = loader.get_template('memory-info.html')
+    return HttpResponse(template.render(context, request))
+
+
+def disc_info(request):
+    context = {
+        "disc_percentage": disc_service.getDiscPercentage()
+    }
+    template = loader.get_template('disc-info.html')
+    return HttpResponse(template.render(context, request))
+
+
+def ip_info(request):
+    context = {
+        "ip_info": ip_service.getIpInfo()
+    }
+    template = loader.get_template('ip-info.html')
+    return HttpResponse(template.render(context, request))
+
+# TODO: Adicionar informação de nome/modelo da CPU (brand)
+# TODO: Adicionar informação do tipo da arquitetura (arch);
+# TODO: Adicionar informação da palavra do processador (bits);
+# TODO: Adicionar informação sobre a frequência total e frequência de uso da CPU;
+# TODO: Adicionar informação do número total de núcleos (núcleo físico) e threads (núcleo lógico).
