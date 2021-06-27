@@ -1,13 +1,11 @@
-import psutil
-
-
 class MemoryService:
 
-    def __init__(self):
+    def __init__(self, psutil):
         self._memory = None
+        self._psutil = psutil
 
     def setMemoryInfo(self):
-        self._memory = psutil.virtual_memory()
+        self._memory = self._psutil.virtual_memory()
 
     def getMemoryInfo(self):
         if self._memory is None:
