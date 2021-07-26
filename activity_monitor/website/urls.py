@@ -9,3 +9,5 @@ urlpatterns = [
     path('disc_info', views.disc_info, name='disc_info'),
     path('ip_info', views.ip_info, name='ip_info'),
 ]
+
+# desafio, pegar o input do usuário pelo terminal e listar os arquivos da pasta digitada no terminal
