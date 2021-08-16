@@ -10,6 +10,10 @@ from .services.os_service import OsService
 
 import psutil
 
+import sched
+import time
+import threading
+
 cpu_service = CpuService(psutil)
 memory_service = MemoryService(psutil)
 disc_service = DiscService(psutil)
@@ -17,23 +21,38 @@ ip_service = IpService(psutil)
 os_service = OsService(psutil)
 
 
+def print_time(cb):
+    time.sleep(2)
+    print("EVENTO", time.ctime())
+    print(f"FREQUENCIA: {psutil.cpu_freq()[0]}")
+    return cb
+
+
 def index(request):
+    scheduler = sched.scheduler(time.time, time.sleep)
     template = loader.get_template('index.html')
+
+    print("EVENTO AGORA", time.ctime())
+
     context = {
         'memory': memory_service.getMemoryInfo(),
         'cpu': cpu_service.getPercent(),
         'disc': disc_service.getDiscPercentage(),
         'ip': ip_service.getIpInfo(),
 
-        'dirs': os_service.getDirs(),
-        'files': os_service.getFilesInfos(),
+        'dirs': scheduler.enterabs(2, 1, print_time(os_service.getDirs), ())[2],
+        'files': scheduler.enterabs(4, 2, print_time(os_service.getFilesInfos), ())[2],
 
         'listOfProcess': os_service.getProcessWith('pid'),
     }
+
+    print('CHAMADAS ESCALONADAS DA FUNÇÃO:', time.ctime())
+    scheduler.run()
     return HttpResponse(template.render(context, request))
 
 
 def cpu_info(request):
+    threading.Thread
     context = {
         'cpu_list': cpu_service.getCpuList(),
         'cpu_brand': cpu_service.getBrand(),
@@ -63,7 +82,8 @@ def disc_info(request):
 
 def ip_info(request):
     context = {
-        "ip_info": ip_service.getIpInfo()
+        # "ip_info": ip_service.getIpInfo()
+        "ip_info": ""
     }
     template = loader.get_template('ip-info.html')
     return HttpResponse(template.render(context, request))
