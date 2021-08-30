@@ -6,7 +6,7 @@ from psutil import AccessDenied
 
 
 class OsService:
-    def __init__(self, psutil):
+    def __init__(self):
         self._dirs_info = os.listdir()
         self._files = []
         self._files_info_dict = dict()

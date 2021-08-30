@@ -8,17 +8,17 @@ from .services.disc import DiscService
 from .services.ip import IpService
 from .services.os_service import OsService
 
-import psutil
 
+import psutil
 import sched
 import time
 import threading
 
-cpu_service = CpuService(psutil)
-memory_service = MemoryService(psutil)
-disc_service = DiscService(psutil)
-ip_service = IpService(psutil)
-os_service = OsService(psutil)
+cpu_service = CpuService()
+memory_service = MemoryService()
+disc_service = DiscService()
+ip_service = IpService()
+os_service = OsService()
 
 
 def print_time(cb):
@@ -31,7 +31,7 @@ def print_time(cb):
 def index(request):
     scheduler = sched.scheduler(time.time, time.sleep)
     template = loader.get_template('index.html')
-
+    print("---------------------------------------------")
     print("EVENTO AGORA", time.ctime())
 
     context = {
@@ -45,7 +45,7 @@ def index(request):
 
         'listOfProcess': os_service.getProcessWith('pid'),
     }
-
+    print("---------------------------------------------")
     print('CHAMADAS ESCALONADAS DA FUNÇÃO:', time.ctime())
     scheduler.run()
     return HttpResponse(template.render(context, request))
@@ -81,9 +81,10 @@ def disc_info(request):
 
 
 def ip_info(request):
+    # ip_service.getIpv4Net()
     context = {
-        # "ip_info": ip_service.getIpInfo()
-        "ip_info": ""
+        "ip_info": ip_service.getIpInfo(),
+        "valid_hosts": ip_service.getHosts()
     }
     template = loader.get_template('ip-info.html')
     return HttpResponse(template.render(context, request))

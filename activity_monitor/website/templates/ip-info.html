@@ -32,9 +32,18 @@
 
         <div class="container fs-5 text bg-light mt-3">
             <div class="mt-3 mb-4">Endereço de IP: <strong>{{ ip_info }}</strong></div>
-       </div>
-
         </div>
+
+        <div id="collapseListOfCpu" class="collapse show" aria-labelledby="listOfCpu" data-parent="#accordion">
+            <div class="card-body">
+                {% for host in valid_hosts %}
+                <div>{{ host }}</div>
+                {% empty %}
+                <li>Sorry, no cpu in this list.</li>
+                {% endfor %}
+          </div>
+        </div>
+
     </div>
 </body>
 </html>

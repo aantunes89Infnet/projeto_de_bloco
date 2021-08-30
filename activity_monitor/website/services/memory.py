@@ -1,6 +1,9 @@
+import psutil
+
+
 class MemoryService:
 
-    def __init__(self, psutil):
+    def __init__(self):
         self._memory = None
         self._psutil = psutil
 

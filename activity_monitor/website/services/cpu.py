@@ -1,10 +1,11 @@
 import random
 import cpuinfo
+import psutil
 
 
 class CpuService:
 
-    def __init__(self, psutil):
+    def __init__(self):
         self._info = cpuinfo.get_cpu_info()
         self._psutil = psutil
 

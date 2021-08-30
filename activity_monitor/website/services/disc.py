@@ -1,6 +1,8 @@
+import psutil
+
 
 class DiscService:
-    def __init__(self, psutil):
+    def __init__(self):
         self._psutil = psutil
         self._disc_percentage = None
 
