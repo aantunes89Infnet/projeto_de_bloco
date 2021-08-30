@@ -8,11 +8,11 @@ from .services.disc import DiscService
 from .services.ip import IpService
 from .services.os_service import OsService
 
-
 import psutil
 import sched
 import time
 import threading
+import pprint
 
 cpu_service = CpuService()
 memory_service = MemoryService()
@@ -81,10 +81,16 @@ def disc_info(request):
 
 
 def ip_info(request):
-    # ip_service.getIpv4Net()
+    interface = ip_service.netDataByInterface()
     context = {
         "ip_info": ip_service.getIpInfo(),
-        "valid_hosts": ip_service.getHosts()
+        # "valid_hosts": ip_service.getHosts(),
+        "net_mask": ip_service.getNetMask(),
+        "gateway": ip_service.getDefaultGateway(),
+        "byte_sent": interface[0],
+        "byte_rec": interface[1],
+        "packets_sent": interface[2],
+        "packets_recv": interface[3],
     }
     template = loader.get_template('ip-info.html')
     return HttpResponse(template.render(context, request))

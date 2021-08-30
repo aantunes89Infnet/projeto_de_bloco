@@ -3,34 +3,42 @@ import socket
 import psutil
 import subprocess
 import os
+import netifaces
 
 
 class IpService:
     def __init__(self):
+        self._psutil = psutil
         self._platform = platform.system()
+        self._gateways = netifaces.gateways()
+        self._socket = socket
 
     def getPlatform(self):
         return self._platform
 
     def getIpInfo(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s = self._socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         return s.getsockname()[0]
-
-    def getIpv4Net(self):
-        dic = psutil.net_if_addrs()
-        netmasks = []
-        for i in dic.values():
-            if i[0].netmask is not None:
-                netmasks.append(i[0].netmask)
-        return netmasks[0]
-
-    def getIpv4NetMask(self):
-        return psutil.net_if_addrs()[0]
 
     def getHosts(self):
         base_ip = self._getSubNet()
         return self._verifyHosts(f"{base_ip}")
+
+    def getNetMask(self):
+        network = self._psutil.net_if_addrs()['en0']
+        netmask = None
+        for net in network:
+            if net[2] is not None:
+                netmask = net[2]
+                break
+        return netmask
+
+    def getDefaultGateway(self):
+        return self._gateways['default'][netifaces.AF_INET][0]
+
+    def netDataByInterface(self):
+        return self._psutil.net_io_counters()
 
     # ----------------- PRIVATE ---------------------
     def _getPingCode(self, hostname):
