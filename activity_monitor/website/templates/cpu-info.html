@@ -69,6 +69,7 @@
            </div>
 
         </section>
+
         <section class="accordion  text mt-3">
             <div class="card">
                 <div class="card-header d-flex align-center bg-secondary" id="processAcordio">
@@ -88,6 +89,25 @@
            </div>
 
         </section>
+
+        <section class="accordion  text mt-3">
+            <div class="card">
+                <div class="card-header d-flex align-center bg-secondary" id="graphAccord">
+                    <a class="text-light btn no-outline" data-toggle="collapse" data-target="#graphs" aria-expanded="false" aria-controls="collapseProcess">
+                        Uso das CPUs
+                    </a>
+                </div>
+
+               <div id="graphs" class="collapse" aria-labelledby="graphAccord" data-parent="#accordion">
+                <div class="card-body">
+                    {% for graph in graphs %}
+                        <img src="data:image/png;base64,{{graph}}" alt="graph" height="450" width="450">
+                    {% endfor %}
+              </div>
+            </div>
+           </div>
+        </section>
+
     </div>
 
     <script>

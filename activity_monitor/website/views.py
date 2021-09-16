@@ -11,8 +11,7 @@ from .services.os_service import OsService
 import psutil
 import sched
 import time
-import threading
-import pprint
+from multiprocessing import Process, Queue
 
 cpu_service = CpuService()
 memory_service = MemoryService()
@@ -52,13 +51,19 @@ def index(request):
 
 
 def cpu_info(request):
-    threading.Thread
+    q = Queue()
+    p = Process(target=getBufferedImg, args=[q, 4])
+    p.start()
+    graphs = q.get()
+    p.join()
+
     context = {
         'cpu_list': cpu_service.getCpuList(),
         'cpu_brand': cpu_service.getBrand(),
         'cpu_arch': cpu_service.getArch(),
         'cpu_bits': cpu_service.getBits(),
         'cpu_freq': cpu_service.getFreq(),
+        'graphs': graphs
     }
     template = loader.get_template('cpu-info.html')
     return HttpResponse(template.render(context, request))
@@ -84,7 +89,6 @@ def ip_info(request):
     interface = ip_service.netDataByInterface()
     context = {
         "ip_info": ip_service.getIpInfo(),
-        # "valid_hosts": ip_service.getHosts(),
         "net_mask": ip_service.getNetMask(),
         "gateway": ip_service.getDefaultGateway(),
         "byte_sent": interface[0],
@@ -98,9 +102,13 @@ def ip_info(request):
 
 def process():
     plist = psutil.get_process_list()
-    plist = sorted(plist, key=lambda i: i.name)
+    plist = sorted(plist, key=lambda x: x.name)
     for i in plist:
         try:
             return i.name, i.get_cpu_percent()
         except AccessDenied:
             return "'%s' Process is not allowing us to view the CPU Usage!" % i.name
+
+
+def getBufferedImg(q, times):
+    q.put(cpu_service.getGraphBuffer(times))
